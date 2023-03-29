@@ -35,18 +35,20 @@ exports.findAll = async (req, res) => {
 
 exports.remove = async(req, res) => {
         try {
+            const id = req.params.id
 
-            const picture = await Picture.findById(req.params.id)
+            const pictureId = await Picture.findById(id)
 
-            if(!picture) {
+            if(!pictureId) {
                 return res.status(404).json({message: "Imagem não encontrada"})
             }
 
-            fs.unlinkSync(picture.src)
+            fs.unlinkSync(pictureId.src)
 
-            await picture.remove()
+            const deletePicture =  await Picture.findByIdAndDelete(pictureId)
 
-            res.json({message: "Imagem removida com sucesso"})
+            res.status(200).json({deletePicture, message: "Imagem removida com sucesso"})
+
             
         } catch (error) {
             res.status(500).json({message: "Erro ao excluir imagem"})
